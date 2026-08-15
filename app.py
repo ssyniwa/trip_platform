@@ -1,58 +1,47 @@
 import streamlit as st
-from pydrive2.auth import GoogleAuth
-from pydrive2.drive import GoogleDrive
-import os
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+import json
 
-# --- Google Drive 認証関数 ---
-@st.cache_resource
-def get_drive():
-    gauth = GoogleAuth()
-    # 自動認証の設定（初回はブラウザが開きます）
-    gauth.LocalWebserverAuth()
-    return GoogleDrive(gauth)
+# --- 認証設定 ---
+# Streamlit CloudのSecretsに設定したJSONの内容を読み込む
+def get_drive_service():
+    # SecretsからJSON文字列を取得
+    creds_dict = json.loads(st.secrets["google_drive"]["credentials"])
+    creds = service_account.Credentials.from_service_account_info(creds_dict)
+    return build('drive', 'v3', credentials=creds)
 
-# --- ファイル一覧取得関数 ---
-def list_files_in_drive(folder_id):
-    drive = get_drive()
-    query = f"'{folder_id}' in parents and trashed=false"
-    file_list = drive.ListFile({'q': query}).GetList()
-    return file_list
+# --- ファイル一覧取得 ---
+def list_files_in_folder(folder_id):
+    service = get_drive_service()
+    query = f"'{folder_id}' in parents and trashed = false"
+    results = service.files().list(q=query, fields="files(id, name, mimeType, webViewLink)").execute()
+    return results.get('files', [])
 
-# --- Streamlit アプリ構成 ---
-st.set_page_config(page_title="WorldBuilder Platform", layout="wide")
+# --- UI構築 ---
 st.title("🌌 架空世界バーチャル観光プラットフォーム")
-
-# サイドバーでフォルダIDを入力
-folder_id = st.sidebar.text_input("Google Drive フォルダIDを入力:")
+folder_id = st.text_input("Google Drive フォルダIDを入力:")
 
 if folder_id:
     try:
-        files = list_files_in_drive(folder_id)
+        files = list_files_in_folder(folder_id)
         
-        # ファイルの分類
+        # ファイル種別ごとに分類（mimeTypeで判定）
         videos = [f for f in files if 'video' in f['mimeType']]
         images = [f for f in files if 'image' in f['mimeType']]
         texts = [f for f in files if 'text' in f['mimeType']]
 
         col1, col2 = st.columns([2, 1])
-
         with col1:
-            st.subheader("🎥 メインビュー")
             if videos:
-                # 実際のWeb公開用リンクを取得（要: 権限設定）
-                st.video(videos[0]['alternateLink']) 
-            
-            st.subheader("🖼️ 風景イメージ")
+                st.video(videos[0]['webViewLink'])
             for img in images:
-                st.image(img['alternateLink'])
-
+                st.image(img['webViewLink'])
         with col2:
-            st.subheader("📜 世界観設定")
             for txt in texts:
-                content = txt.GetContentString()
-                st.write(content)
+                # サービスアカウントによる内容取得は別途権限が必要なため、
+                # まずはwebViewLinkでファイル内容を確認するのが無難です
+                st.markdown(f"[{txt['name']}]({txt['webViewLink']})")
 
     except Exception as e:
-        st.error(f"エラーが発生しました: {e}")
-else:
-    st.info("左側のサイドバーに、観光地データが入ったGoogleドライブのフォルダIDを入力してください。")
+        st.error(f"接続エラー: {e}")
