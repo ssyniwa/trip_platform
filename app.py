@@ -23,7 +23,15 @@ def get_file_content(service, file_id):
         return content.decode('utf-8')
     except Exception as e:
         return f"読み込みエラー: {e}"
-# --- UI構築 ---
+def display_image_from_drive(service, file_id):
+    try:
+        # API経由で画像データをダウンロード
+        request = service.files().get_media(fileId=file_id)
+        image_data = request.execute()
+        # Streamlitが扱える形式に変換
+        st.image(image_data, use_container_width=True)
+    except Exception as e:
+        st.error(f"画像読み込みエラー: {e}")
 st.title("🌌 架空世界バーチャル観光プラットフォーム")
 folder_id = st.text_input("Google Drive フォルダIDを入力:")
 
@@ -43,8 +51,10 @@ if folder_id:
         with col1:
             if videos:
                 st.video(videos[0]['webViewLink'])
+            st.subheader("🖼️ 風景イメージ")
             for img in images:
-                st.image(img['webViewLink'])
+                # 修正：リンクを渡すのではなく、関数を呼び出して中身を表示
+                display_image_from_drive(service, img['id'])
                 
         with col2:
             st.subheader("📜 世界観設定")
