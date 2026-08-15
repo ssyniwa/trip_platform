@@ -2,7 +2,6 @@ import streamlit as st
 from googleapiclient.discovery import build
 from google.oauth2 import service_account
 import json
-
 # --- 認証設定 ---
 # Streamlit CloudのSecretsに設定したJSONの内容を読み込む
 def get_drive_service():
