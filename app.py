@@ -51,7 +51,7 @@ def upload_file(service, folder_id, file_name, file_content, mime_type):
 st.title("🌌 架空世界バーチャル観光プラットフォーム")
 # --- UI: 登録・アップロード機能 ---
 with st.sidebar.expander("🚀 新しい観光地の登録"):
-    parent_folder_id = st.text_input("親フォルダID (観光地管理用):")
+    parent_folder_id = st.text_input("1HxA8qNzA48Cf1JwsuAelxr_g73R8HITV")
     user_name = st.text_input("ユーザー名:")
     location_name = st.text_input("観光地名:")
     
