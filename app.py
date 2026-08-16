@@ -86,7 +86,8 @@ if st.button("観光地リストを更新"):
             
             # 全体情報
             st.image(convert_drive_url(row['全体画像URL']), use_container_width=True)
-            st.markdown(f"### 🌍 概要\n{row['全体説明']}")
+            st.markdown("### 🌍 観光地全体の説明")
+            st.markdown(f"<div class='desc-box'>{row['全体説明']}</div>", unsafe_allow_html=True)
             
             # 人気スポット 3選
             st.markdown("### 🌟 人気スポット TOP3")
