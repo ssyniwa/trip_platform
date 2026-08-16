@@ -95,7 +95,8 @@ if st.button("観光地リストを更新"):
                 with col:
                     
                     st.image(convert_drive_url(row[f'スポット{i}画像URL']), use_container_width=True)
-                    st.write(f"**Spot {i}**\n{row[f'スポット{i}説明']}")
+                    st.markdown(f"<p class='spot-text'>SPOT {i}</p>", unsafe_allow_html=True)
+                    st.write(row[f'スポット{i}説明'])
                     st.markdown("</div>", unsafe_allow_html=True)
             
             st.write("---")
