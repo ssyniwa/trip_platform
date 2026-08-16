@@ -1,5 +1,6 @@
 import streamlit as st
-import gspread # 追加: pip install gspread
+import gspread
+import json  # ← この行を追加または確認してください
 from oauth2client.service_account import ServiceAccountCredentials
 
 # --- 認証設定 ---
