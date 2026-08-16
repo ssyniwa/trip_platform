@@ -62,28 +62,27 @@ local_css()
 st.title("🌌 架空世界バーチャル観光プラットフォーム")
 st.markdown("---")
 
-if st.button("観光地リストを読み込む"):
-    # ... (データ取得処理)
+if st.button("観光地リストを更新"):
     client = get_gspread_client()
     sheet = client.open("観光地管理シート").sheet1
     data = sheet.get_all_records()
+    
     for row in data:
-        
-        st.header(f"📍 {row['観光地名']}")
-        st.caption(f"Posted by {row['ユーザー名']}")
-        
-        # 全体画像と説明
-        st.image(convert_drive_url(row['全体画像URL']), use_container_width=True)
-        st.markdown(f"### 🌍 概要\n{row['全体説明']}")
-        
-        # 人気スポット 3選
-        st.markdown("### 🌟 人気スポット TOP3")
-        cols = st.columns(3)
-        for i, col in enumerate(cols, 1):
-            with col:
-                
-                st.image(convert_drive_url(row[f'スポット{i}画像URL']), use_container_width=True)
-                st.write(f"**Spot {i}**\n{row[f'スポット{i}説明']}")
-                st.markdown("</div>", unsafe_allow_html=True)
-        
-        st.markdown("</div>", unsafe_allow_html=True) # カード終了
+        # st.expanderで観光地ごとにグループ化
+        with st.expander(f"📍 {row['観光地名']}  |  投稿者: {row['ユーザー名']}", expanded=False):
+            
+            # 全体情報
+            st.image(convert_drive_url(row['全体画像URL']), use_container_width=True)
+            st.markdown(f"### 🌍 概要\n{row['全体説明']}")
+            
+            # 人気スポット 3選
+            st.markdown("### 🌟 人気スポット TOP3")
+            cols = st.columns(3)
+            for i, col in enumerate(cols, 1):
+                with col:
+                    st.markdown("<div class='spot-card'>", unsafe_allow_html=True)
+                    st.image(convert_drive_url(row[f'スポット{i}画像URL']), use_container_width=True)
+                    st.write(f"**Spot {i}**\n{row[f'スポット{i}説明']}")
+                    st.markdown("</div>", unsafe_allow_html=True)
+            
+            st.write("---")
