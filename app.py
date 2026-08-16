@@ -2,7 +2,25 @@ import streamlit as st
 import gspread
 import json
 from oauth2client.service_account import ServiceAccountCredentials
-
+def local_css():
+    st.markdown("""
+    <style>
+    .card {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    .spot-card {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #e0e0e0;
+    }
+    h1 { color: #2c3e50; text-align: center; }
+    </style>
+    """, unsafe_allow_html=True)
 # --- 認証とURL変換 ---
 def get_gspread_client():
     creds_dict = json.loads(st.secrets["google_drive"]["credentials"])
@@ -37,21 +55,33 @@ with st.sidebar.expander("🚀 新しい観光地の登録"):
         st.success("登録完了！")
 
 # --- 表示機能 ---
+st.set_page_config(page_title="バーチャル観光プラットフォーム", layout="wide")
+local_css()
+
+# --- 表示機能 (カード型デザイン) ---
 st.title("🌌 架空世界バーチャル観光プラットフォーム")
-if st.button("一覧を表示"):
-    client = get_gspread_client()
-    sheet = client.open("観光地管理シート").sheet1
-    data = sheet.get_all_records()
+st.markdown("---")
+
+if st.button("観光地リストを読み込む"):
+    # ... (データ取得処理)
     
     for row in data:
-        st.header(f"📍 {row['観光地名']} (投稿: {row['ユーザー名']})")
-        st.image(convert_drive_url(row['全体画像URL']), use_container_width=True)
-        st.write(row['全体説明'])
+        st.markdown(f"<div class='card'>", unsafe_allow_html=True)
+        st.header(f"📍 {row['観光地名']}")
+        st.caption(f"Posted by {row['ユーザー名']}")
         
-        st.subheader("🌟 人気スポットTOP3")
+        # 全体画像と説明
+        st.image(convert_drive_url(row['全体画像URL']), use_container_width=True)
+        st.markdown(f"### 🌍 概要\n{row['全体説明']}")
+        
+        # 人気スポット 3選
+        st.markdown("### 🌟 人気スポット TOP3")
         cols = st.columns(3)
         for i, col in enumerate(cols, 1):
             with col:
+                st.markdown("<div class='spot-card'>", unsafe_allow_html=True)
                 st.image(convert_drive_url(row[f'スポット{i}画像URL']), use_container_width=True)
-                st.write(row[f'スポット{i}説明'])
-        st.markdown("---")
+                st.write(f"**Spot {i}**\n{row[f'スポット{i}説明']}")
+                st.markdown("</div>", unsafe_allow_html=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True) # カード終了
