@@ -5,20 +5,33 @@ from oauth2client.service_account import ServiceAccountCredentials
 def local_css():
     st.markdown("""
     <style>
+    /* 全体のカード枠 */
     .card {
-        background-color: #f8f9fa;
+        background-color: #ffffff;
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-left: 10px solid #6c5ce7; /* パープルのアクセント */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        margin-bottom: 25px;
+    }
+    /* 全体説明エリア */
+    .desc-box {
+        background-color: #fdf6e3;
+        padding: 15px;
+        border-radius: 10px;
+        color: #5d4037;
+        font-size: 1.1em;
         margin-bottom: 20px;
     }
+    /* スポットカード */
     .spot-card {
-        background-color: #ffffff;
-        padding: 10px;
+        background-color: #e1f5fe;
+        padding: 15px;
         border-radius: 10px;
-        border: 1px solid #e0e0e0;
+        border-top: 5px solid #03a9f4;
+        height: 100%;
     }
-    h1 { color: #2c3e50; text-align: center; }
+    .spot-text { color: #0277bd; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 # --- 認証とURL変換 ---
