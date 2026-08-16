@@ -64,7 +64,9 @@ st.markdown("---")
 
 if st.button("観光地リストを読み込む"):
     # ... (データ取得処理)
-    
+    client = get_gspread_client()
+    sheet = client.open("観光地管理シート").sheet1
+    data = sheet.get_all_records()
     for row in data:
         st.markdown(f"<div class='card'>", unsafe_allow_html=True)
         st.header(f"📍 {row['観光地名']}")
