@@ -14,7 +14,13 @@ def save_to_sheet(user_name, location_name, description, image_url):
     client = get_gspread_client()
     sheet = client.open("観光地管理シート").sheet1 # スプレッドシート名
     sheet.append_row([user_name, location_name, description, image_url])
-
+def convert_drive_url(url):
+    # 共有リンクからファイルIDを抽出
+    if "drive.google.com/file/d/" in url:
+        file_id = url.split("/d/")[1].split("/")[0]
+        # 直接リンクの形式に変換
+        return f"https://lh3.googleusercontent.com/d/{file_id}"
+    return url
 # --- UI: 登録機能 ---
 with st.sidebar.expander("🚀 新しい観光地の登録"):
     user_name = st.text_input("ユーザー名:")
@@ -36,5 +42,8 @@ if st.button("一覧を表示"):
     for row in data:
         st.subheader(f"{row['観光地名']} (投稿者: {row['ユーザー名']})")
         st.write(row['説明文'])
-        st.image(row['画像URL'])
+        
+        # 変換関数を通してから表示
+        direct_url = convert_drive_url(row['画像URL'])
+        st.image(direct_url, use_container_width=True)
         st.write("---")
