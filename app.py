@@ -38,16 +38,27 @@ def create_folder(service, folder_name, parent_id):
         'mimeType': 'application/vnd.google-apps.folder',
         'parents': [parent_id]
     }
-    folder = service.files().create(body=file_metadata, fields='id').execute()
+    # 共有ドライブ対応の引数を追加
+    folder = service.files().create(
+        body=file_metadata, 
+        fields='id',
+        supportsAllDrives=True
+    ).execute()
     return folder.get('id')
-
 def upload_file(service, folder_id, file_name, file_content, mime_type):
     from googleapiclient.http import MediaIoBaseUpload
     import io
     
     file_metadata = {'name': file_name, 'parents': [folder_id]}
     media = MediaIoBaseUpload(io.BytesIO(file_content), mimetype=mime_type)
-    service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    
+    # supportsAllDrives=True を追加して共有ドライブに対応させる
+    service.files().create(
+        body=file_metadata, 
+        media_body=media, 
+        fields='id',
+        supportsAllDrives=True
+    ).execute()
 st.title("🌌 架空世界バーチャル観光プラットフォーム")
 # --- UI: 登録・アップロード機能 ---
 with st.sidebar.expander("🚀 新しい観光地の登録"):
