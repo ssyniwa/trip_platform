@@ -49,8 +49,7 @@ if folder_id:
 
         col1, col2 = st.columns([2, 1])
         with col1:
-            if videos:
-                st.video(videos[0]['webViewLink'])
+            
             st.subheader("🖼️ 風景イメージ")
             for img in images:
                 # 修正：リンクを渡すのではなく、関数を呼び出して中身を表示
