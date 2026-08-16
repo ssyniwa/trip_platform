@@ -83,7 +83,7 @@ if st.button("観光地リストを更新"):
     for row in data:
         # st.expanderで観光地ごとにグループ化
         with st.expander(f"📍 {row['観光地名']}  |  投稿者: {row['ユーザー名']}", expanded=False):
-            st.markdown(f"<div class='card'>", unsafe_allow_html=True)
+            
             # 全体情報
             st.image(convert_drive_url(row['全体画像URL']), use_container_width=True)
             st.markdown("### 🌍 観光地全体の説明")
