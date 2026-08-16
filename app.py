@@ -80,7 +80,7 @@ if st.button("観光地リストを更新"):
             cols = st.columns(3)
             for i, col in enumerate(cols, 1):
                 with col:
-                    st.markdown("<div class='spot-card'>", unsafe_allow_html=True)
+                    
                     st.image(convert_drive_url(row[f'スポット{i}画像URL']), use_container_width=True)
                     st.write(f"**Spot {i}**\n{row[f'スポット{i}説明']}")
                     st.markdown("</div>", unsafe_allow_html=True)
