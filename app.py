@@ -100,4 +100,4 @@ if st.button("観光地リストを更新"):
                     st.write(row[f'スポット{i}説明'])
                     st.markdown("</div>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
-            st.write("---")
+            
